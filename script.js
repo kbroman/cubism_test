@@ -42,6 +42,9 @@ cubism_plot = function(dates, labels, data_by_col)
     ylim = [d3.min(data_by_col.map(function(d) { return(d3.min(d)) })),
             d3.max(data_by_col.map(function(d) { return(d3.max(d)) }))]
 
+    // gap in times
+    var gap = (+dates[1] - +dates[0])
+
     var dF = new Date(2015,1,1)
     var context = cubism.context()
         .serverDelay(Date.now() - dF)
