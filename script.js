@@ -16,6 +16,10 @@ d3.csv("test2.csv", function(rows) {
         data_by_col[i] = data_by_row.map(function(d) { return(d[i]) })
     }
 
+    for(i=0; i<labels.length; i++) { // introduce more variability among columns
+        data_by_col[i] = data_by_col[2].map(function(d) { return((d-0.1)*(i/5+1)) })
+    }
+
     // so now we have
     // - dates as a bunch of strings
     // - labels for the columns (I think alphabetical order)
@@ -33,6 +37,10 @@ cubism_plot = function(dates, labels, data_by_col)
     // dates from strings to proper dates
     var format = d3.time.format("%Y-%m-%d");
     dates = dates.map(function(d) { return(format.parse(d)) })
+
+    // range of data
+    ylim = [d3.min(data_by_col.map(function(d) { return(d3.min(d)) })),
+            d3.max(data_by_col.map(function(d) { return(d3.max(d)) }))]
 
     var dF = new Date(2015,1,1)
     var context = cubism.context()
@@ -62,6 +70,7 @@ cubism_plot = function(dates, labels, data_by_col)
         .enter().insert("div", ".bottom")
         .attr("class", "horizon")
         .call(context.horizon()
+              .extent(ylim) // adjust y-axis in each
               .format(d3.format(".3f")));
 
     context.on("focus", function(i) {
