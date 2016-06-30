@@ -52,7 +52,7 @@ cubism_plot = function(dates, labels, data_by_col)
         .size(1280)
         .stop();
 
-    var div = d3.select("div#chart")
+    var div = d3.select("div#chart").style("width", "900px")
     div.selectAll(".axis")
         .data(["top", "bottom"])
         .enter().append("div")
