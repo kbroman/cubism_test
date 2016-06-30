@@ -33,7 +33,6 @@ cubism_plot = function(dates, labels, data_by_col)
     // dates from strings to proper dates
     var format = d3.time.format("%Y-%m-%d");
     dates = dates.map(function(d) { return(format.parse(d)) })
-    console.log(dates)
 
     var dF = new Date(2015,1,1)
     var context = cubism.context()
