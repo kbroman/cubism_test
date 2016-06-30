@@ -2,16 +2,16 @@ d3.csv("test2.csv", function(rows) {
 
     // parse the rows and pull out
     // ... the dates (column must be "date")
-    dates = rows.map(function(d) { return(d.date) })
+    var dates = rows.map(function(d) { return(d.date) })
     // ... the labels on the other columns
-    labels = Object.keys(rows[0]).filter(function(d) { if(d != "date") return(d) })
+    var labels = Object.keys(rows[0]).filter(function(d) { if(d != "date") return(d) })
     // ... the data for the other columns
-    data_by_row = rows.map(function(d) {
+    var data_by_row = rows.map(function(d) {
         return(labels.map(function(e) { return(+d[e]) }))
     })
 
     // transpose the data
-    data_by_col = labels.map(function(d) { return([]) })
+    var data_by_col = labels.map(function(d) { return([]) })
     for(i=0; i<labels.length; i++) {
         data_by_col[i] = data_by_row.map(function(d) { return(d[i]) })
     }
@@ -39,8 +39,8 @@ cubism_plot = function(dates, labels, data_by_col)
     dates = dates.map(function(d) { return(format.parse(d)) })
 
     // range of data
-    ylim = [d3.min(data_by_col.map(function(d) { return(d3.min(d)) })),
-            d3.max(data_by_col.map(function(d) { return(d3.max(d)) }))]
+    var ylim = [d3.min(data_by_col.map(function(d) { return(d3.min(d)) })),
+                d3.max(data_by_col.map(function(d) { return(d3.max(d)) }))]
 
     // gap in times
     var gap = (+dates[1] - +dates[0])
@@ -52,7 +52,7 @@ cubism_plot = function(dates, labels, data_by_col)
         .size(1280)
         .stop();
 
-    div = d3.select("div#chart")
+    var div = d3.select("div#chart")
     div.selectAll(".axis")
         .data(["top", "bottom"])
         .enter().append("div")
