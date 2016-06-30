@@ -47,11 +47,10 @@ cubism_plot = function(dates, labels, data_by_col)
         .attr("class", "rule")
         .call(context.rule());
 
-    var Data = ["test2"].map(stock);
-    //var primary = Data[1];
-    //var secondary = primary.shift(-864e5*30);
-    //Data[2] = secondary;
-
+    var Data = []
+    for(i=0; i<labels.length; i++) {
+        Data.push(make_metric(data_by_col[i], labels[i]))
+    }
 
     d3.select("body").selectAll(".horizon")
         .data(Data)
@@ -64,22 +63,10 @@ cubism_plot = function(dates, labels, data_by_col)
         d3.selectAll(".value").style("right", i == null ? null : context.size() - i + "px");
     });
 
-    function stock(name) {
-        var format = d3.time.format("%Y-%m-%d");
+    function make_metric(vector, label) {
+        //var format = d3.time.format("%Y-%m-%d");
         return context.metric(function(start, stop, step, callback) {
-            d3.csv(name + ".csv", function(rows) {
-                rows = rows.map(function(d) { return [format.parse(d.date), +d.a]; })
-                    .filter(function(d) { return d[1]; }).reverse();
-
-                var dates = []
-                var values = [];
-
-                rows.forEach(function(d) {
-                    dates.push(d[0])
-                    values.push(d[1])
-                });
-                callback(null, values)
-            });
-        }, name);
+                callback(null, vector)
+        }, label);
     }
 }
