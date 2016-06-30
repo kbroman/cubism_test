@@ -30,6 +30,11 @@ d3.csv("test2.csv", function(rows) {
 // function to make the plot
 cubism_plot = function(dates, labels, data_by_col)
 {
+    // dates from strings to proper dates
+    var format = d3.time.format("%Y-%m-%d");
+    dates = dates.map(function(d) { return(format.parse(d)) })
+    console.log(dates)
+
     var dF = new Date(2015,1,1)
     var context = cubism.context()
         .serverDelay(Date.now() - dF)
@@ -65,7 +70,6 @@ cubism_plot = function(dates, labels, data_by_col)
     });
 
     function make_metric(vector, label) {
-        //var format = d3.time.format("%Y-%m-%d");
         return context.metric(function(start, stop, step, callback) {
                 callback(null, vector)
         }, label);
