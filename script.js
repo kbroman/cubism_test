@@ -32,18 +32,19 @@ cubism_plot = function(dates, labels, data_by_col)
 {
     var dF = new Date(2015,1,1)
     var context = cubism.context()
-        .serverDelay(Date.now() - dF) //correct sign so axis is correct & not in future.
+        .serverDelay(Date.now() - dF)
         .step(1280*60*60*24)
         .size(1280)
         .stop();
 
-    d3.select("#demo").selectAll(".axis")
+    div = d3.select("div#chart")
+    div.selectAll(".axis")
         .data(["top", "bottom"])
         .enter().append("div")
         .attr("class", function(d) { return d + " axis"; })
         .each(function(d) { d3.select(this).call(context.axis().ticks(12).orient(d)); });
 
-    d3.select("body").append("div")
+    div.append("div")
         .attr("class", "rule")
         .call(context.rule());
 
@@ -52,7 +53,7 @@ cubism_plot = function(dates, labels, data_by_col)
         Data.push(make_metric(data_by_col[i], labels[i]))
     }
 
-    d3.select("body").selectAll(".horizon")
+    div.selectAll(".horizon")
         .data(Data)
         .enter().insert("div", ".bottom")
         .attr("class", "horizon")
