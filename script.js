@@ -1,53 +1,85 @@
-var dF = new Date(2015,1,1)
-var context = cubism.context()
-    .serverDelay(Date.now() - dF) //correct sign so axis is correct & not in future.
-    .step(1280*60*60*24)
-    .size(1280)
-    .stop();
+d3.csv("test2.csv", function(rows) {
 
-d3.select("#demo").selectAll(".axis")
-    .data(["top", "bottom"])
-  .enter().append("div")
-    .attr("class", function(d) { return d + " axis"; })
-    .each(function(d) { d3.select(this).call(context.axis().ticks(12).orient(d)); });
+    // parse the rows and pull out
+    // ... the dates (column must be "date")
+    dates = rows.map(function(d) { return(d.date) })
+    // ... the labels on the other columns
+    labels = Object.keys(rows[0]).filter(function(d) { if(d != "date") return(d) })
+    // ... the data for the other columns
+    data_by_row = rows.map(function(d) {
+        return(labels.map(function(e) { return(+d[e]) }))
+    })
 
-d3.select("body").append("div")
-    .attr("class", "rule")
-    .call(context.rule());
+    // transpose the data
+    data_by_col = labels.map(function(d) { return([]) })
+    for(i=0; i<labels.length; i++) {
+        data_by_col[i] = data_by_row.map(function(d) { return(d[i]) })
+    }
 
-var Data = ["test2"].map(stock);
-//var primary = Data[1];
-//var secondary = primary.shift(-864e5*30);
-//Data[2] = secondary;
+    // so now we have
+    // - dates as a bunch of strings
+    // - labels for the columns (I think alphabetical order)
+    // - the data, as a doubly-indexed array, stored by column
+
+    cubism_plot(dates, labels, data_by_col)
+
+})
 
 
-d3.select("body").selectAll(".horizon")
-    .data(Data)
-  .enter().insert("div", ".bottom")
-    .attr("class", "horizon")
-  .call(context.horizon()
-    .format(d3.format("+,.2p")));
 
-context.on("focus", function(i) {
-  d3.selectAll(".value").style("right", i == null ? null : context.size() - i + "px");
-});
+// function to make the plot
+cubism_plot = function(dates, labels, data_by_col)
+{
+    var dF = new Date(2015,1,1)
+    var context = cubism.context()
+        .serverDelay(Date.now() - dF) //correct sign so axis is correct & not in future.
+        .step(1280*60*60*24)
+        .size(1280)
+        .stop();
 
-// Replace this with context.graphite and graphite.metric!
-function stock(name) {
-  var format = d3.time.format("%Y-%m-%d");
-  return context.metric(function(start, stop, step, callback) {
-    d3.csv(name + ".csv", function(rows) {
-        rows = rows.map(function(d) { return [format.parse(d.date), +d.a]; })
-                   .filter(function(d) { return d[1]; }).reverse();
+    d3.select("#demo").selectAll(".axis")
+        .data(["top", "bottom"])
+        .enter().append("div")
+        .attr("class", function(d) { return d + " axis"; })
+        .each(function(d) { d3.select(this).call(context.axis().ticks(12).orient(d)); });
 
-        var dates = []
-        var values = [];
+    d3.select("body").append("div")
+        .attr("class", "rule")
+        .call(context.rule());
 
-        rows.forEach(function(d) {
-            dates.push(d[0])
-          values.push(d[1])
-      });
-        callback(null, values)
+    var Data = ["test2"].map(stock);
+    //var primary = Data[1];
+    //var secondary = primary.shift(-864e5*30);
+    //Data[2] = secondary;
+
+
+    d3.select("body").selectAll(".horizon")
+        .data(Data)
+        .enter().insert("div", ".bottom")
+        .attr("class", "horizon")
+        .call(context.horizon()
+              .format(d3.format("+,.2p")));
+
+    context.on("focus", function(i) {
+        d3.selectAll(".value").style("right", i == null ? null : context.size() - i + "px");
     });
-  }, name);
+
+    function stock(name) {
+        var format = d3.time.format("%Y-%m-%d");
+        return context.metric(function(start, stop, step, callback) {
+            d3.csv(name + ".csv", function(rows) {
+                rows = rows.map(function(d) { return [format.parse(d.date), +d.a]; })
+                    .filter(function(d) { return d[1]; }).reverse();
+
+                var dates = []
+                var values = [];
+
+                rows.forEach(function(d) {
+                    dates.push(d[0])
+                    values.push(d[1])
+                });
+                callback(null, values)
+            });
+        }, name);
+    }
 }
