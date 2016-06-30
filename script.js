@@ -72,7 +72,7 @@ cubism_plot = function(dates, labels, data_by_col)
         .data(Data)
         .enter().insert("div", ".bottom")
         .attr("class", "horizon")
-        .call(context.horizon()
+        .call(context.horizon().height(80)
               .extent(ylim) // adjust y-axis in each
               .format(d3.format(".3f")));
 
