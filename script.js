@@ -57,6 +57,10 @@ cubism_plot = function(dates, labels, data_by_col)
 
     var div = d3.select("div#chart").style("width", width + "px")
 
+    div.append("div")
+        .attr("class", "rule")
+        .call(context.rule());
+
     // top axis
     var top_axis = context.axis().orient("top").ticks(4)
     var top_axis_svg = div.append("svg")
@@ -65,10 +69,13 @@ cubism_plot = function(dates, labels, data_by_col)
         .append("g")
     top_axis_svg.call(top_axis)
 
-
-    div.append("div")
-        .attr("class", "rule")
-        .call(context.rule());
+    // bottom axis
+    var bottom_axis = context.axis().orient("bottom").ticks(4)
+    var bottom_axis_svg = div.append("svg")
+        .attr("width", width).attr("class", "bottom axis")
+                      .attr("height", axis_height)
+        .append("g")
+    bottom_axis_svg.call(bottom_axis)
 
     var Data = []
     for(i=0; i<labels.length; i++) {
