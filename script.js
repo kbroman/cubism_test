@@ -44,20 +44,27 @@ cubism_plot = function(dates, labels, data_by_col)
 
     // gap in times
     var gap = (+dates[1] - +dates[0])
+    var width = dates.length
+    var axis_height = 30
+    var horizon_height = 80
 
     var dF = new Date(2015,1,1)
     var context = cubism.context()
-        .serverDelay(Date.now() - dF)
-        .step(1280*60*60*24)
-        .size(1280)
+        .serverDelay(gap)
+        .step(gap)
+        .size(width)
         .stop();
 
-    var div = d3.select("div#chart")
-    div.selectAll(".axis")
-        .data(["top", "bottom"])
-        .enter().append("div")
-        .attr("class", function(d) { return d + " axis"; })
-        .each(function(d) { d3.select(this).call(context.axis().ticks(12).orient(d)); });
+    var div = d3.select("div#chart").style("width", width + "px")
+
+    // top axis
+    var top_axis = context.axis().orient("top").ticks(4)
+    var top_axis_svg = div.append("svg")
+        .attr("width", width).attr("class", "top axis")
+                      .attr("height", axis_height)
+        .append("g")
+    top_axis_svg.call(top_axis)
+
 
     div.append("div")
         .attr("class", "rule")
@@ -72,7 +79,7 @@ cubism_plot = function(dates, labels, data_by_col)
         .data(Data)
         .enter().insert("div", ".bottom")
         .attr("class", "horizon")
-        .call(context.horizon().height(80)
+        .call(context.horizon().height(horizon_height)
               .extent(ylim) // adjust y-axis in each
               .format(d3.format(".3f")));
 
