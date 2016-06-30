@@ -58,7 +58,7 @@ cubism_plot = function(dates, labels, data_by_col)
         .enter().insert("div", ".bottom")
         .attr("class", "horizon")
         .call(context.horizon()
-              .format(d3.format("+,.2p")));
+              .format(d3.format(".3f")));
 
     context.on("focus", function(i) {
         d3.selectAll(".value").style("right", i == null ? null : context.size() - i + "px");
